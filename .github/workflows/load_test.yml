@@ -1,0 +1,50 @@
+name: Run JMeter Test
+
+on: [push, pull_request]
+
+jobs:
+  jmeter-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Install Client Dependencies
+        working-directory: ./client
+        run: npm install
+
+      - name: Build 
+        working-directory: ./client
+        run: npm run build
+
+      - name: Run frontend on background
+        working-directory: ./client
+        run: npm run dev & PIDF=$! && sleep 10 && kill -SIGINT $PIDF
+
+      - name: Install backend dependencies
+        working-directory: ./server
+        run: npm install 
+
+      - name: Run backend on background
+        working-directory: ./server
+        run: npm run start:dev & PIDB=$! && sleep 10 && kill -SIGINT $PIDB 
+
+      - name: Install JMeter
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-11-jre-headless wget unzip
+          wget https://downloads.apache.org//jmeter/binaries/apache-jmeter-5.6.3.zip
+          unzip apache-jmeter-5.6.3.zip
+          echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
+
+      - name: Run JMeter Test Plan
+        working-directory: ./server
+        run: |
+          jmeter -n -t testing_tools/jmeter_resources/scripts/homepage-load50.jmx -l results.jtl -e -o report
+
+      - name: Upload HTML Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: jmeter-html-report
+          path: report
