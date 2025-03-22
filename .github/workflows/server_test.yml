@@ -1,0 +1,62 @@
+name: Run Server Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test-client:
+    name: Test Server
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: diego
+          POSTGRES_PASSWORD:  haipriori1
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U diego"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+        PORT: 5001
+        DB_HOST: localhost
+        DB_PORT: 5432
+        DB_USER: diego
+        DB_PASS: haipriori1
+        DB_NAME: test_db
+        JWT_SECRET: 'd0cvn28bmd41ueiqd8a#023n9da89&'
+        NEXT_PUBLIC_API_BASE_URL: http://localhost:5001
+
+    steps:
+      - name: Checkout main repo
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Server Dependencies
+        working-directory: ./server
+        run: npm install
+
+      - name: Build 
+        working-directory: ./server
+        run: npm run build
+
+      - name: Run backend on background
+        working-directory: ./server
+        run: npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
+            
+      - name: Run tests 
+        working-directory: ./client
+        run: npm run test
