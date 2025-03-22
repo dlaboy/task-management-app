@@ -61,29 +61,14 @@ jobs:
         working-directory: ./server
         run: npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
             
-    #   - name: Testing Register
-    #     working-directory: ./client
-    #     run: npm run test:e2e:register
+      - name: Testing Register
+        working-directory: ./client
+        run: npm run test:e2e:register
 
-    #   - name: Testing Login
-    #     working-directory: ./client
-    #     run: npm run test:e2e:login
-
-    #   - name: Testing Tasks Management
-    #     working-directory: ./client
-    #     run: npm run test:e2e:tasks
-
-      - name: Install Xvfb
-        run: sudo apt-get install -y xvfb
-      
-      - name: Start virtual display
-        run: |
-          Xvfb :99 -screen 0 1920x1080x24 > /dev/null 2>&1 &
-          export DISPLAY=:99
-        shell: bash
-      
-      - name: Run Selenium tests (non-headless)
-        env:
-          DISPLAY: ":99"
+      - name: Testing Login
+        working-directory: ./client
         run: npm run test:e2e:login
-      
+
+      - name: Testing Tasks Management
+        working-directory: ./client
+        run: npm run test:e2e:tasks
