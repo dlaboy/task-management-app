@@ -57,6 +57,15 @@ jobs:
         working-directory: ./server
         run: npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
             
-      - name: Run tests 
+      - name: Run Unit Auth Tests 
         working-directory: ./server
-        run: npm run test
+        run: npm run test:unit:auth 
+      - name: Run Unit Tasks Tests 
+        working-directory: ./server
+        run: npm run test:unit:task
+      - name: Run Integration Auth Tests 
+        working-directory: ./server
+        run: npm run test:int:auth
+      - name: Run Integration Tasks Tests 
+        working-directory: ./server
+        run: npm run test:int:task
