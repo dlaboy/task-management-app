@@ -61,7 +61,6 @@ jobs:
         working-directory: ./server
         run: npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
             
-
       - name: Testing Register
         working-directory: ./client
         run: npm run test:e2e:register
