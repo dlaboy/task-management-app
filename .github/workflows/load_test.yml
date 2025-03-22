@@ -44,7 +44,7 @@ jobs:
           jmeter -n -t testing_tools/jmeter_resources/scripts/homepage-load50.jmx -l results.jtl -e -o report
 
       - name: Upload HTML Report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: jmeter-html-report
           path: report
