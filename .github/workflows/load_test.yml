@@ -39,7 +39,6 @@ jobs:
           echo "$PWD/apache-jmeter-5.6.3/bin" >> $GITHUB_PATH
 
       - name: Run JMeter Test Plan
-        working-directory: ./server
         run: |
           jmeter -n -t homepage-load50.jmx -l results.jtl -e -o report
 
