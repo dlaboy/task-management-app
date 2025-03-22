@@ -41,7 +41,7 @@ jobs:
       - name: Run JMeter Test Plan
         working-directory: ./server
         run: |
-          jmeter -n -t testing_tools/jmeter_resources/scripts/homepage-load50.jmx -l results.jtl -e -o report
+          jmeter -n -t homepage-load50.jmx -l results.jtl -e -o report
 
       - name: Upload HTML Report
         uses: actions/upload-artifact@v4
