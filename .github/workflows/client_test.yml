@@ -11,6 +11,31 @@ jobs:
     name: Test Client
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:13
+        env:
+          POSTGRES_USER: ${{secrets.DB_USER}}
+          POSTGRES_PASSWORD:  ${{secrets.DB_PASS}}
+          POSTGRES_DB: ${{secrets.DB_NAME}}
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd=`pg_isready -U ${{secrets.DB_USER}}`
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+        PORT: ${{secrets.PORT}}
+        DB_HOST: ${{secrets.DB_HOST}}
+        DB_PORT: ${{secrets.DB_PORT}}
+        DB_USER: ${{secrets.DB_USER}}
+        DB_PASS: ${{secrets.DB_PASS}}
+        DB_NAME: ${{secrets.DB_NAME}}
+        JWT_SECRET: ${{secrets.JWT_SECRET}}
+        NEXT_PUBLIC_API_BASE_URL: ${{secrets.NEXT_PUBLIC_API_BASE_URL}}
+
     steps:
       - name: Checkout main repo
         uses: actions/checkout@v3
@@ -24,6 +49,15 @@ jobs:
         working-directory: ./client
         run: npm install
 
-      - name: Run Client Tests
+      - name: Build 
         working-directory: ./client
-        run: npm test
+        run: npm run build
+
+      - name: Run backend on background
+        working-directory: ./client
+        run: cd .. && cd server && npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
+            
+      - name: Run frontend locally
+        working-directory: ./client
+        run: npm run test:e2e
+      
