@@ -53,9 +53,13 @@ jobs:
         working-directory: ./client
         run: npm run build
 
+      - name: Install backend dependencies
+        working-directory: ./server
+        run: npm install 
+
       - name: Run backend on background
-        working-directory: ./client
-        run: cd .. && cd server && npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
+        working-directory: ./server
+        run: npm run start:dev & PID=$! && sleep 10 && kill -SIGINT $PID 
             
       - name: Run frontend locally
         working-directory: ./client
