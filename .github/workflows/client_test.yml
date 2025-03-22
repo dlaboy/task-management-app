@@ -28,7 +28,7 @@ jobs:
 
     env:
         PORT: 5001
-        DB_HOST: postgres
+        DB_HOST: localhost
         DB_PORT: 5432
         DB_USER: diego
         DB_PASS: haipriori1
